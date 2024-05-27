@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pstat.h"
 
-void print_remaining_args(char **args) {
+void ps_print_remaining_args(char **args) {
     for (int i = 1; args[i] != NULL; i++) {
         printf("Arg[%d]: %s\n", i, args[i]);
     }
@@ -9,5 +9,5 @@ void print_remaining_args(char **args) {
 
 void pstat(char **args) {
     printf("PSTAT\n");
-    print_remaining_args(args);
+    ps_print_remaining_args(args);
 }
