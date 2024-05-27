@@ -2,7 +2,7 @@
 #include "bg.h"
 
 void bg_print_remaining_args(char **args) {
-    for (int i = 1; args[i] != NULL; i++) {
+    for (int i = 0; args[i] != NULL; i++) {
         printf("Arg[%d]: %s\n", i, args[i]);
     }
 }
