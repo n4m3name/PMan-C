@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int main(int argc, char* argv[])
-{
-    if (argc != 2) {
-        fprintf(stderr, "Usage: tester interval\n");
-    } else {
-        int interval = atoi(argv[1]);
+int main(int argc, char* argv[]){
         while(1) {
-            sleep(interval);
+            sleep(1);
         }
-    }
     exit(0);
 }

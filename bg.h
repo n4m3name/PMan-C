@@ -1,12 +1,12 @@
 #ifndef BG_H
 #define BG_H
 
-void bg(char **args);
-void bgkill(char **args);
-void bglist(char **args);
-void bgstart(char **args);
-void bgstop(char **args);
-void bg_print_remaining_args(char **args);
+#include <stdio.h>
 
-#endif // BG_H
+void bg(char *arg);
+void bgkill(char *arg);
+void bglist();
+void bgstart(char *arg);
+void bgstop(char *arg);
 
+#endif /* BG_H */
