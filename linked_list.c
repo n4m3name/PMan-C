@@ -1,124 +1,107 @@
-#include "linked_list.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include "linked_list.h"
 
-// Function to retrieve process data based on the PID using pstat
-void populateNode(pid_t pid, Node *node) {
-    // pid_t pid = atoi(pid); // Convert PID string to integer
-
-    // Check if PID is valid
-    if (pid <= 0) {
-        printf("Error: Invalid PID.\n");
-        return;
-    }
-
-    // Open the stat file of the process
-    char stat_path[50];
-    sprintf(stat_path, "/proc/%d/stat", pid);
-    FILE *stat_file = fopen(stat_path, "r");
-    if (stat_file == NULL) {
-        printf("Error: Failed to open stat file for PID %d.\n", pid);
-        return;
-    }
-
-    // Read stat data
-    char comm[256], state;
-    unsigned long utime, stime;
-    long rss;
-    unsigned long voluntary_ctxt_switches, nonvoluntary_ctxt_switches;
-
-    // if (fscanf(stat_file, "%*d %s %c %*d %*d %*d %*d %*d %*lu %*lu %*lu %*lu %lu %lu %ld %*ld %*ld %*ld %*ld %*ld %*ld %*ld %*ld %*ld %*ld %*ld %*llu %*lu %*ld %*lu %*lu %*lu %*lu %*lu %*ld %*lu %*lu %*llu %*lu %lu %lu", comm, &state, &utime, &stime, &rss, &voluntary_ctxt_switches, &nonvoluntary_ctxt_switches) != 7) {
-    //     printf("Error: Failed to read stat data for PID %d.\n", pid);
-    //     fclose(stat_file);
-    //     return;
-    // }
-
-
-    // Close the stat file
-    fclose(stat_file);
-
-    // Populate the node with retrieved information
-    strcpy(node->filename, comm);
-    node->state = state;
-    node->utime = utime;
-    node->stime = stime;
-    node->rss = rss;
-    node->voluntary_ctxt_switches = voluntary_ctxt_switches;
-    node->nonvoluntary_ctxt_switches = nonvoluntary_ctxt_switches;
-}
-
-// Function to add a new node with relevant information based on the PID
-Node *add_newNode(Node *head, pid_t new_pid) {
-    Node *new_node = (Node *)malloc(sizeof(Node)); // Allocate memory for the new node
-    if (new_node == NULL) {
-        fprintf(stderr, "Error: Memory allocation failed\n");
+Node *addNode(Node *head, pid_t pid, char *path){
+    Node *node = (Node *)malloc(sizeof(Node));
+    // Handle mem allocation failure
+	if (node == NULL) {
+        perror("Memory allocation failed");
         exit(EXIT_FAILURE);
     }
-    // Populate the new node with relevant information
-    populateNode(new_pid, new_node);
-    new_node->pid = new_pid;
-    new_node->next = head; // Set the next pointer of the new node to the current head
-    return new_node; // Return the new node as the new head of the list
+	// Set val's
+    node->pid = pid; // process id
+    node->path = strdup(path); // path to exec
+    node->next = NULL; // next
+	node->run = 1; // currently running, default yes
+	// If 1st, ret
+    if (head == NULL) {
+        return node;
+    }
+	// Else add to end of list
+    Node *temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = node;
+    return head;
 }
 
-// Node *add_newNode(Node *head, pid_t new_pid, char *new_filename, char state, double utime, double stime, int rss, int voluntary_ctxt_switches, int nonvoluntary_ctxt_switches) {
-//     Node *new_node = (Node *)malloc(sizeof(Node)); // Allocate memory for the new node
-//     if (new_node == NULL) {
-//         fprintf(stderr, "Error: Memory allocation failed\n");
-//         exit(EXIT_FAILURE);
-//     }
-//     new_node->pid = new_pid;
-//     new_node->filename = new_filename;
-//     new_node->state = state;
-//     new_node->utime = utime;
-//     new_node->stime = stime;
-//     new_node->rss = rss;
-//     new_node->voluntary_ctxt_switches = voluntary_ctxt_switches;
-//     new_node->nonvoluntary_ctxt_switches = nonvoluntary_ctxt_switches;
-//     new_node->next = head; // Set the next pointer of the new node to the current head
-//     return new_node; // Return the new node as the new head of the list
-// }
-
-Node *deleteNode(Node *head, pid_t pid) {
-    Node *current = head;
-    Node *prev = NULL;
-
-    // Traverse the list to find the node with the given pid
-    while (current != NULL && current->pid != pid) {
-        prev = current;
-        current = current->next;
+Node *deleteNode(Node *head, pid_t pid){
+	// If none, ret
+    if (head == NULL) {
+        return NULL;
     }
-
-    // If the node with the given pid is found
-    if (current != NULL) {
-        // If the node to be deleted is the head of the list
-        if (prev == NULL) {
-            head = head->next;
-        } else {
-            prev->next = current->next;
+	// If 1st, del
+    if (head->pid == pid) {
+        Node *temp = head->next;
+        free(head->path);
+        free(head);
+        return temp;
+    }
+	// Else find & del
+    Node *prev = head;
+    Node *curr = head->next;
+    while (curr != NULL) {
+        if (curr->pid == pid) {
+            prev->next = curr->next;
+            free(curr->path);
+            free(curr);
+            break;
         }
-        free(current); // Free the memory allocated for the node
-    } else {
-        fprintf(stderr, "Error: Process %d does not exist.\n", pid);
+        prev = curr;
+        curr = curr->next;
     }
-
-    return head; // Return the updated head of the list
+    return head;
 }
 
-void printList(Node *node) {
+void printList(Node *node){
+	// Iterate & print
     while (node != NULL) {
-        printf("PID: %d, Filename: %s, State: %c, utime: %lf, stime: %lf, rss: %d, voluntary_ctxt_switches: %d, nonvoluntary_ctxt_switches: %d\n",
-               node->pid, node->filename, node->state, node->utime, node->stime, node->rss,
-               node->voluntary_ctxt_switches, node->nonvoluntary_ctxt_switches);
-        node = node->next; // Move to the next node
+        printf("PID: %d, Path: %s, Running: %d\n", node->pid, node->path, node->run);
+        node = node->next;
     }
 }
 
-int PifExist(Node *node, pid_t pid) {
+Node *exists(Node *node, pid_t pid){
     while (node != NULL) {
         if (node->pid == pid) {
-            return 1; // Process with the given pid exists
+            return node;
         }
-        node = node->next; // Move to the next node
+        node = node->next;
     }
-    return 0; // Process with the given pid does not exist
+    return NULL;
 }
+
+
+void updateRun(Node *head){
+    pid_t pid;
+    int p_stat;
+    while (1) {
+        pid = waitpid(-1, &p_stat, WCONTINUED | WNOHANG | WUNTRACED); // wait for relevant child process
+		if (pid<=0) break; // if none, break
+		Node *node = exists(head, pid); // check if process in list
+        if (WIFSTOPPED(p_stat)){ // handle WIFSTOPPED
+            printf("Process %d stopped.\n", pid);
+            if (node) node->run = 0; // set run = F (0)
+        }
+        if (WIFCONTINUED(p_stat)) { // handle WIFCONTINUED
+            printf("Process %d started.\n", pid);
+            if (node) node->run = 1; // set run = T (1)
+        }
+        if (WIFSIGNALED(p_stat)) { // handle WIFSIGNALED
+            printf("Process %d killed.\n", pid);
+            deleteNode(head, pid); // delete from list
+        }
+        if (WIFEXITED(p_stat)) { // handle WIFEXITED
+            printf("Process %d terminated.\n", pid);
+            deleteNode(head, pid); // delete from list
+        }
+    }
+}
+
