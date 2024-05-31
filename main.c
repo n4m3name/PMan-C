@@ -62,12 +62,9 @@ void getInput(char **input) {
             input[i++] = strdup(token); // store token in args array
             token = strtok(NULL, " "); // get the next token
         }
-        // input[i] = NULL; // Null terminate array
         if (i == MAX_ARGS && token != NULL) {
             fprintf(stderr, "Error: Too many arguments\n");
-            for (int j = 0; input[j] != NULL; j++) {
-                free(input[j]); // Free allocated memory
-            }
+            for (int j = 0; input[j] != NULL; j++) free(input[j]); // Free allocated memory
         }
         free(line);
     }
