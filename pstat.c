@@ -33,8 +33,8 @@ int readStatFile(pid_t pid, char *comm, char *state, unsigned long *utimeRaw, un
         perror("Error"); 
         return 0; 
     }
-    if (fscanf(file, "%*d (%[^)]) %c %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lu %lu %*s %*s %*s %*s %*s %*s %*s %*s %ld \
-                                    %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s", \
+    if (fscanf(file, "%*d (%[^)]) %c %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %lu %lu %*s %*s %*s %*s %*s %*s %*s %*s %ld %*s %*s \
+                                    %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s", \
                                     comm, state, utimeRaw, stimeRaw, rss) != 5) { // Copy values from stat file to varibales, skip as needed. Error: copy failure
         perror("Error"); printf("Failed to read stat data for PID %d.\n", pid);
         fclose(file); return 0; 
@@ -70,6 +70,7 @@ void pstat(char *sPid) {
     if (!readStatFile(pid, comm, &state, &utimeRaw, &stimeRaw, &rss) || \
         !readStatusFile(pid, &voluntary_ctxt_switches, &nonvoluntary_ctxt_switches)) return; // Copy values from files, Error: failrure to copy values
     float utime = utimeRaw / 100.0, stime = stimeRaw / 100.0; // convert from clock to seconds
-    printf("comm:\t%s\nstate:\t%c\nutime:\t%.2f seconds\nstime:\t%.2f seconds\nrss:\t%ld\nvoluntary ctxt switches:\t%lu\nnonvoluntary ctxt switches:\t%lu\n", \
+    printf("comm:\t%s\nstate:\t%c\nutime:\t%.2f seconds\nstime:\t%.2f seconds\nrss:\t%ld \
+                    \nvoluntary ctxt switches:\t%lu\nnonvoluntary ctxt switches:\t%lu\n", \
             comm, state, utime, stime, rss, voluntary_ctxt_switches, nonvoluntary_ctxt_switches); // output info
 }

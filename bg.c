@@ -31,7 +31,7 @@ void bg(char **input) {
     if (pid == 0) { // Handle child:
         setpgid(0, 0); // set process group ID = parent (prevent interactivity, SIGTTN)
         execvp(input[1], &input[1]); // execute program w args
-        perror("Execution failed\n"); // error: prev line failed
+        perror("Execution failed"); // error: prev line failed
         exit(EXIT_FAILURE);
     } else if (pid > 0) { // Handle parent:
         printf("Started process %d\n", pid);
