@@ -4,6 +4,8 @@ A simple process manager written in C
 
 *Assignment 1 of CSC360: Operating Systems, University of Victoria - Summer 2024*
 
+[Github link](https://github.com/n4m3name/PMan-C)
+
 ## Usage
 ### **Compiling:**
 A makefile (based on that from assignment helper files) has been provided: In order to compile, run `make`.  
