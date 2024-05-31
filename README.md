@@ -17,14 +17,14 @@ To use pman, run the executable `./pman` within the `A1` folder. (If you've adde
 
 The following list of available commands can be accessed with the `h` command during use:
 ```
-    bg <path>        - Start a program in the background
-    bgkill <pid>     - Kill a background program
-    bgkill a         - Kill all background programs
-    bglist           - List all running background programs
-    bgstart <pid>    - Start a stopped background program
-    bgstop <pid>     - Stop a running background program
-    pstat <pid>      - Display statistics of a background program
-    q                - Quit the program
+    bg <path>        - Start a process in the background
+    bgkill <pid>     - Kill a background process
+    bgkill a         - Kill all background processes
+    bglist           - List all running background processes
+    bgstart <pid>    - Start a stopped background process
+    bgstop <pid>     - Stop a running background process
+    pstat <pid>      - Display statistics of a background process
+    q                - Quit pman
 ```
 Where:
 - \<path\> is the path to executable (or the command if in path)
