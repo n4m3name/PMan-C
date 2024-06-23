@@ -37,6 +37,6 @@ I recommend running `bgkill a` **before** quitting - this way no processes will 
 ### **Testing:**
 The provided tester program `./inf` has been edited to be more usable with pman. No tags are printed to the terminal - this way many instances can be run, stopped, started, and inspected using the above commands without making a mess in the terminal. Sleep has been replaced with usleep to verify utime, stime when running `pstat`.  
 
-`./inf` should be compiled by running the make command in the `A1` folder. To start an instance of it while using pman, run the command `bg ./inf`.  
+`./inf` should be compiled by running the make command in the `A1` folder. To start an instance, run the command `bg ./inf` from the `pman` prompt.  
 
 The current implementation should work with any basic linux program whether executable or in the path, although functionality is lost for interactive programs (such as vim, nano) since I can't launch separate terminals from the school server.
