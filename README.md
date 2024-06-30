@@ -30,7 +30,7 @@ Where:
 - \<path\> is the path to executable (or the command if in path)
 - \<pid\> is the process id (use `bglist` for running pid's)
 
-I recommend running `bgkill a` **before** quitting - this way no processes will be left running indefinitely adter exiting the program. 
+I recommend running `bgkill a` **before** quitting - this way no processes will be left running indefinitely after exiting the program. 
 
 **\+ Note:** The convention that 1:=running 0:=stopped is used in the output of `bglist` and `pstat`.
 
