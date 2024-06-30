@@ -1,0 +1,15 @@
+# Object files
+*.o
+
+# Zip
+*.zip
+
+# Executable files
+pman
+inf
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*~

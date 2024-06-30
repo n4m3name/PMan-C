@@ -21,17 +21,16 @@ Contains main loop for pman, with helper functions to process & respond to user 
 
 extern Node *head; // declare head node as extern
 
-// Generate help message
 void genHelp() {
     printf("Available commands:\n");
-    printf("  bg <path>      - Start a program in the background\n");
-    printf("  bgkill <pid>   - Kill a background program\n");
-    printf("  bgkill a       - Kill all background programs\n");
-    printf("  bglist         - List all running background programs\n");
-    printf("  bgstart <pid>  - Start a stopped background program\n");
-    printf("  bgstop <pid>   - Stop a running background program\n");
-    printf("  pstat <pid>    - Display statistics of a background program\n");
-    printf("  q              - Quit the program\n");
+    printf("  bg <path>      - Start a process in the background\n");
+    printf("  bgkill <pid>   - Kill a background process\n");
+    printf("  bgkill a       - Kill all background processes\n");
+    printf("  bglist         - List all running background processes\n");
+    printf("  bgstart <pid>  - Start a stopped background process\n");
+    printf("  bgstop <pid>   - Stop a running background process\n");
+    printf("  pstat <pid>    - Display statistics of a background process\n");
+    printf("  q              - Quit pman\n");
 }
 
 // Redirect input to appropriate function
@@ -62,12 +61,9 @@ void getInput(char **input) {
             input[i++] = strdup(token); // store token in args array
             token = strtok(NULL, " "); // get the next token
         }
-        // input[i] = NULL; // Null terminate array
         if (i == MAX_ARGS && token != NULL) {
             fprintf(stderr, "Error: Too many arguments\n");
-            for (int j = 0; input[j] != NULL; j++) {
-                free(input[j]); // Free allocated memory
-            }
+            for (int j = 0; input[j] != NULL; j++) free(input[j]); // Free allocated memory
         }
         free(line);
     }
